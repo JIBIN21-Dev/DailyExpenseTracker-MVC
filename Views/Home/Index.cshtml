@@ -1,0 +1,754 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Expense & Income Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced animated background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(100, 255, 218, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            filter: blur(2px);
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.3;
+            }
+
+            25% {
+                transform: translateY(-120px) translateX(80px) scale(1.1);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translateY(-200px) translateX(-60px) scale(0.9);
+                opacity: 0.4;
+            }
+
+            75% {
+                transform: translateY(-140px) translateX(120px) scale(1.05);
+                opacity: 0.5;
+            }
+        }
+
+        /* Navbar - more compact */
+        nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .joss-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #64ffda 0%, #00bfa5 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #0f0f0f;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(100, 255, 218, 0.4);
+            animation: logoGlow 3s infinite alternate;
+            position: relative;
+        }
+
+        @@keyframes logoGlow {
+            0% {
+                box-shadow: 0 8px 25px rgba(100, 255, 218, 0.4);
+                transform: scale(1);
+            }
+
+            100% {
+                box-shadow: 0 12px 40px rgba(100, 255, 218, 0.6);
+                transform: scale(1.05);
+            }
+        }
+
+        .brand-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #64ffda 0%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-tagline {
+            font-size: 11px;
+            color: #64ffda;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.2);
+                transform: translate(-50%, -50%);
+                transition: width 0.6s, height 0.6s;
+            }
+
+            .btn:hover::before {
+                width: 300px;
+                height: 300px;
+            }
+
+        .btn-login {
+            background: transparent;
+            color: white;
+            border: 2px solid #64ffda;
+        }
+
+            .btn-login:hover {
+                border-color: #64ffda;
+                box-shadow: 0 0 20px rgba(100, 255, 218, 0.4);
+            }
+
+        .btn-register {
+            background: linear-gradient(135deg, #64ffda 0%, #00bfa5 100%);
+            color: #0f0f0f;
+            border: 2px solid transparent;
+        }
+
+            .btn-register:hover {
+                box-shadow: 0 5px 25px rgba(100, 255, 218, 0.5);
+                transform: translateY(-2px);
+            }
+
+        /* Main Content - optimized for screen fit */
+        .container {
+            position: relative;
+            z-index: 5;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 40px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1300px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .hero-section {
+            animation: fadeInLeft 1s ease;
+        }
+
+        @@keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-section h1 {
+            font-size: 40px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #64ffda 0%, #fff 50%, #64ffda 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            font-weight: 900;
+        }
+
+        .hero-section .subtitle {
+            font-size: 20px;
+            color: #aaa;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .hero-section .description {
+            font-size: 15px;
+            color: #888;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-cta {
+            padding: 12px 28px;
+            font-size: 15px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #64ffda 0%, #00bfa5 100%);
+            color: #0f0f0f;
+            box-shadow: 0 4px 15px rgba(100, 255, 218, 0.3);
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(100, 255, 218, 0.5);
+            }
+
+        .features-section {
+            animation: fadeInRight 1s ease;
+        }
+
+        @@keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .feature-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .feature-box {
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.05) 0%, rgba(20,20,20,0.8) 100%);
+            padding: 18px;
+            border-radius: 15px;
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+            .feature-box:hover {
+                transform: translateY(-5px);
+                border-color: rgba(100, 255, 218, 0.5);
+                box-shadow: 0 10px 30px rgba(100, 255, 218, 0.2);
+                background: linear-gradient(135deg, rgba(100, 255, 218, 0.1) 0%, rgba(20,20,20,0.9) 100%);
+            }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .feature-box h3 {
+            font-size: 16px;
+            color: #64ffda;
+            margin-bottom: 6px;
+        }
+
+        .feature-box p {
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        .tracking-flow {
+            margin-top: 15px;
+            padding: 18px;
+            background: rgba(100, 255, 218, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+            .tracking-flow h3 {
+                font-size: 15px;
+                color: #64ffda;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #64ffda 0%, #00bfa5 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(100, 255, 218, 0.3);
+        }
+
+        .flow-step p {
+            font-size: 11px;
+            color: #aaa;
+        }
+
+        .flow-arrow {
+            color: #64ffda;
+            font-size: 18px;
+        }
+
+        /* Modal improvements */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(30,30,30,0.95) 0%, rgba(15,15,15,0.98) 100%);
+            margin: 5% auto;
+            padding: 30px 25px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 420px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(100, 255, 218, 0.3);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            animation: slideDown 0.4s ease;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @@keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close {
+            color: #64ffda;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+            .close:hover {
+                color: white;
+            }
+
+        .modal-content h2 {
+            color: #64ffda;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 26px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 6px;
+                color: #ccc;
+                font-weight: 600;
+                font-size: 13px;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 12px;
+                border: 2px solid rgba(100, 255, 218, 0.2);
+                border-radius: 10px;
+                font-size: 14px;
+                background: rgba(50,50,50,0.5);
+                color: white;
+                transition: all 0.3s;
+            }
+
+                .form-group input:focus {
+                    outline: none;
+                    border-color: #64ffda;
+                    background: rgba(70,70,70,0.7);
+                    box-shadow: 0 0 15px rgba(100, 255, 218, 0.2);
+                }
+
+                .form-group input::placeholder {
+                    color: #666;
+                }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #64ffda 0%, #00bfa5 100%);
+            color: #0f0f0f;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+            .btn-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(100, 255, 218, 0.4);
+            }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 18px;
+            color: #888;
+            font-size: 13px;
+        }
+
+            .form-footer a {
+                color: #64ffda;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+                .form-footer a:hover {
+                    color: white;
+                    text-decoration: underline;
+                }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .hero-section h1 {
+                font-size: 36px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            nav {
+                padding: 12px 20px;
+            }
+
+            .hero-section h1 {
+                font-size: 32px;
+            }
+
+            .feature-boxes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Particles -->
+    <div class="particles">
+        <div class="particle" style="width: 120px; height: 120px; left: 10%; top: 15%; animation-delay: 0s;"></div>
+        <div class="particle" style="width: 80px; height: 80px; left: 75%; top: 25%; animation-delay: 2s;"></div>
+        <div class="particle" style="width: 150px; height: 150px; left: 45%; top: 55%; animation-delay: 4s;"></div>
+        <div class="particle" style="width: 90px; height: 90px; left: 15%; top: 70%; animation-delay: 1s;"></div>
+        <div class="particle" style="width: 110px; height: 110px; left: 70%; top: 80%; animation-delay: 3s;"></div>
+        <div class="particle" style="width: 70px; height: 70px; left: 85%; top: 10%; animation-delay: 5s;"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="logo-container">
+            <div class="joss-logo">JOSS</div>
+            <div class="brand-info">
+                <div class="brand-name">💰 ExpenseFlow</div>
+                <div class="brand-tagline">Track Smart</div>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-login" onclick="openModal('loginModal')">Login</button>
+            <button class="btn btn-register" onclick="openModal('registerModal')">Get Started</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content-grid">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <h1>Track Every Penny, Master Your Money</h1>
+                <p class="subtitle">The smart way to manage your daily expenses and income</p>
+                <p class="description">
+                    Take control of your financial future with our intelligent tracking system. Monitor spending patterns, analyze income sources, and make data-driven decisions to achieve your financial goals.
+                </p>
+                <div class="cta-buttons">
+                    <button class="btn-cta btn-primary" onclick="openModal('registerModal')">Start Tracking Free</button>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="features-section">
+                <div class="feature-boxes">
+                    <div class="feature-box">
+                        <span class="feature-icon">📊</span>
+                        <h3>Visual Analytics</h3>
+                        <p>Beautiful charts and graphs that make your financial data easy to understand</p>
+                    </div>
+                    <div class="feature-box">
+                        <span class="feature-icon">⚡</span>
+                        <h3>Quick Entry</h3>
+                        <p>Add expenses in seconds with our lightning-fast interface</p>
+                    </div>
+                    <div class="feature-box">
+                        <span class="feature-icon">🎯</span>
+                        <h3>Smart Goals</h3>
+                        <p>Set budgets and get alerts when you're close to limits</p>
+                    </div>
+                    <div class="feature-box">
+                        <span class="feature-icon">🔐</span>
+                        <h3>Bank-Level Security</h3>
+                        <p>Your data is encrypted and protected with military-grade security</p>
+                    </div>
+                </div>
+
+                <!-- Tracking Flow -->
+                <div class="tracking-flow">
+                    <h3>How It Works</h3>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-icon">📝</div>
+                            <p>Add Transaction</p>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-icon">🏷️</div>
+                            <p>Categorize</p>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-icon">📈</div>
+                            <p>Analyze</p>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-icon">💡</div>
+                            <p>Save Smart</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Welcome Back!</h2>
+            <form action="Dashboard" method="post">
+                <div class="form-group">
+                    <label for="login-name">Full Name</label>
+                    <input type="text" id="login-name" placeholder="Enter your name" name="Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="Enter your email" name="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" name="Password" required>
+                </div>
+                <button type="submit" class="btn-submit">Login</button>
+                <div class="form-footer">
+                    Don't have an account? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Register here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Create Account</h2>
+            <form action="Index" method="post">
+                <div class="form-group">
+                    <label for="register-name">Full Name</label>
+                    <input type="text" id="register-name" placeholder="Enter your name" name="Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email Address</label>
+                    <input type="email" id="register-email" placeholder="Enter your email" name="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" minlength="8" maxlength="15" id="register-password" placeholder="Create a password" name="Password" required>
+                </div>
+                <button type="submit" class="btn-submit">Register</button>
+                <div class="form-footer">
+                    Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMsg">Success!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const toastEl = document.getElementById('liveToast');
+            const toastBody = document.getElementById('toastMsg');
+
+            if (type === 'error') toastEl.className = 'toast align-items-center text-white bg-danger border-0';
+            else toastEl.className = 'toast align-items-center text-white bg-success border-0';
+
+            toastBody.innerText = message;
+
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function switchModal(closeId, openId) {
+            closeModal(closeId);
+            openModal(openId);
+        }
+
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
